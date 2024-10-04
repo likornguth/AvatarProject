@@ -20,9 +20,13 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera , useGLTF } from '@react-three/drei';
 import { Model } from './ReadyPlayerMeAvatar.jsx';
 
+function My3DModel({ url }) {
+  const { scene } = useGLTF(url);
+  return <primitive object={scene} />;
+}
 
 export default function App() {
 
@@ -48,7 +52,7 @@ export default function App() {
       {/* Adjusting camera with PerspectiveCamera */}
       <PerspectiveCamera
         makeDefault
-        position={[0, 1.5, 1]} // Positioning the camera to frame head and shoulders
+        position={[0, 1.5, 0.5]} // Positioning the camera to frame head and shoulders
         fov={45} // Field of view - adjust this to zoom in or out
       />
       
@@ -58,13 +62,16 @@ export default function App() {
       
       {/* Render the model */}
       <Model mousePosition={mousePosition} wireframe ={true}/>
+
+      <My3DModel url="/models/low-poly-living-room-with-furniture/source/Low_Poly_LivingRoom.glb" /> {/* Update the path to your model file */}
+
       
       {/* Controls to allow orbiting around the model */}
       {/* Orbit controls with zoom and pan limits */}
       <OrbitControls
-        target={[0, 1.5, 0]} // Center controls on the head
-        minDistance={.5} // Minimum zoom distance
-        maxDistance={1} // Maximum zoom distance
+        target={[0, 1.5, 0.5]} // Center controls on the head
+        minDistance={.25} // Minimum zoom distance
+        maxDistance={.5} // Maximum zoom distance
         minPolarAngle={Math.PI / 4} // Limit vertical rotation (up/down)
         maxPolarAngle={Math.PI / 2} // Limit to looking straight at the head
         minAzimuthAngle={-Math.PI / 4} // Limit horizontal rotation (left/right)
