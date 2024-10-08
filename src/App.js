@@ -81,13 +81,14 @@ export default function App() {
       <button
       style={{
         position: 'absolute',
-        top: '20 px',
+        top: '15vh',
+        left: '10vw', // Adjust this value to position slightly to the left
         zIndex: 1,
         padding: '10px 20px',
         fontSize: '24px',
         backgroundColor: isHovered ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.3)', // Semi-transparent background
         border: '2px solid white',
-        color: isHovered ? 'white' : 'darkgreen',
+        color: isHovered ? 'black' : 'white',
         cursor: 'pointer',
         transition: 'background-color 0.3s, color 0.3s',
         borderRadius: 10
@@ -96,7 +97,7 @@ export default function App() {
       onMouseLeave={handleMouseLeave}
       onClick={waveHello}
     >
-      say hi
+      hi, welcome to my site &lt;3
     </button>
 
       {/* 3D Canvas */}
