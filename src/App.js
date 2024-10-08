@@ -97,7 +97,7 @@ export default function App() {
       onMouseLeave={handleMouseLeave}
       onClick={waveHello}
     >
-      welcome to my site &lt;3
+      welcome to my site
     </button>
 
       {/* 3D Canvas */}
@@ -108,8 +108,8 @@ export default function App() {
           fov={45} // Field of view - adjust this to zoom in or out
         />
         <ambientLight intensity={0.5} />
-        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
-        <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
+        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} color="rgb(230,187,173)"  />
+        <pointLight position={[-10, 10, -5]} decay={0} intensity={Math.PI} color="rgba(173, 216, 230,1)" />
 
         {/* Render the model */}
         <Model mousePosition={mousePosition} playAnimation={playAnimation} wireframe={true} />
