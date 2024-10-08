@@ -13,7 +13,7 @@ import * as THREE from 'three';
 import { CCDIKSolver, CCDIKHelper } from 'three/addons/animation/CCDIKSolver.js';
 
 
-export function Model({ mousePosition, wireframe = true}, ...props ) {
+export function Model({ mousePosition, playAnimation , wireframe = true}, ...props ) {
   const { scene } = useGLTF('/ReadyPlayerMeAvatar-transformed.glb')
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { nodes, materials } = useGraph(clone)
@@ -24,6 +24,8 @@ export function Model({ mousePosition, wireframe = true}, ...props ) {
 
   // Assuming you have references to the bones
   const mesh = nodes['Wolf3D_Body']
+  console.log(nodes['Wolf3D_Head'])
+  
   const hipsBone =  mesh.skeleton.bones[0] /* reference to Hips bone */;
   const spineBone = mesh.skeleton.bones[1]/* reference to Spine bone */;
   const spine1Bone = mesh.skeleton.bones[2]/* reference to Spine1 bone */;
@@ -32,6 +34,13 @@ export function Model({ mousePosition, wireframe = true}, ...props ) {
   const headBone = mesh.skeleton.bones[5] /* reference to Head bone */;
   const leftEyeBone = mesh.skeleton.bones[7]/* reference to LeftEye bone */;
   const rightEyeBone = mesh.skeleton.bones[8]/* reference to RightEye bone */;
+  const leftShoulder = mesh.skeleton.bones[9] 
+  const leftArm = mesh.skeleton.bones[10] 
+  const leftForearm = mesh.skeleton.bones[11] 
+  const rightShoulder = mesh.skeleton.bones[33] 
+  const rightArm = mesh.skeleton.bones[34] 
+  const rightForearm = mesh.skeleton.bones[35] 
+
 
   // Set the hierarchy
   hipsBone.add(spineBone);
@@ -41,6 +50,41 @@ export function Model({ mousePosition, wireframe = true}, ...props ) {
   neckBone.add(headBone);
   headBone.add(leftEyeBone);
   headBone.add(rightEyeBone);
+
+  spine2Bone.add(leftShoulder)
+  spine2Bone.add(rightShoulder)
+  leftShoulder.add(leftArm)
+  leftArm.add(leftForearm)
+  rightShoulder.add(rightArm)
+  rightArm.add(rightForearm)
+
+  function to_rad(degrees){
+    const rad = degrees * Math.PI / 180.0
+    return rad
+  }
+
+  leftShoulder.rotation.y = to_rad(-25.0)
+  rightShoulder.rotation.y = to_rad(25.0)
+  leftShoulder.rotation.x = 1.5198795050922367
+// shoulder rotation
+// _x :  1.5198795050922367
+// _y :  -0.4363323129985824
+// _z :  -1.753153402330732
+//forearm rotation
+// _x : 0.034283133132039754
+// _y : -0.010623913109914352
+// _z : 0.4801787367349862
+
+  function resetLeftArm(){
+    leftShoulder.rotation.x = 1.5198795050922367
+    leftShoulder.rotation.y =  -0.4363323129985824
+    leftShoulder.rotation.z = -1.753153402330732
+    leftForearm.rotation.x = 0.034283133132039754
+    leftForearm.rotation.y = -0.010623913109914352
+    leftForearm.rotation.z = 0.4801787367349862
+  }
+
+
 
   const handleBone = new THREE.Bone(); // Create a handle bone for eye tracking
   headBone.add(handleBone); // Add it to the head bone or an appropriate parent
@@ -56,15 +100,75 @@ export function Model({ mousePosition, wireframe = true}, ...props ) {
       headBone.lookAt(headdirection)
   }
 
+  let waveStep = 0
+  function waveHello(leftShoulder, leftForearm) {
+    // Simple wave by oscillating the arm back and forth
+    nodes.Wolf3D_Head.morphTargetInfluences[1] = Math.min(waveStep, .5) // mouthsmile morph target infl
+    nodes.Wolf3D_Head.morphTargetInfluences[0] = Math.min(waveStep, .2) // mouthopen morph target influencer
+    const maxRotation = 25.0 * (Math.PI / 180.0); // 45 degrees in radians
+    const waveSpeed = 0.05; // Adjust this value to control speed
+  
+    // Increment wave step
+    waveStep += waveSpeed;
+  
+    // Oscillate the left forearm and shoulder rotation for the wave motion
+    //leftShoulder.rotation.z = Math.sin(waveStep) * maxRotation; // Oscillate shoulder on z-axis
+    if(waveStep < 4 ){
+      leftShoulder.rotation.y = Math.min(to_rad(20*waveStep-25.0), maxRotation)
+      leftShoulder.rotation.x = Math.max(-waveStep+1.5198795050922367,to_rad(-5.0))
+      leftForearm.rotation.z = Math.min(2*waveStep, Math.PI/2.0)
+    }
+  
+    if (waveStep > 3 && waveStep <= 10) {
+      //waveStep = 0; // Reset after one wave cycle
+      //leftForearm.rotation.x = Math.sin(waveStep * 2) * maxRotation; // Oscillate forearm faster for waving motion
+      leftForearm.rotation.z = Math.sin(waveStep * 2) * maxRotation + Math.PI/2.0
+    }
+    if (waveStep > 10 && waveStep < 15){
+      let itp = 1-(15.0-waveStep)/5.0
+      let shoulder_curr = new THREE.Vector3(leftShoulder.rotation.x, leftShoulder.rotation.y, leftShoulder.rotation.z)
+      let forearm_curr = new THREE.Vector3(leftForearm.rotation.x, leftForearm.rotation.y, leftForearm.rotation.z)
+      let shoulder_final = new THREE.Vector3(1.5198795050922367, -0.4363323129985824, -1.75315340233073)
+      let forearm_final = new THREE.Vector3(0.034283133132039754, -0.010623913109914352, 0.4801787367349862)
+
+
+      leftShoulder.rotation.x = shoulder_curr.x + (shoulder_final.x - shoulder_curr.x) * itp;
+      leftShoulder.rotation.y = shoulder_curr.y + (shoulder_final.y - shoulder_curr.y) * itp;
+      leftShoulder.rotation.z = shoulder_curr.z + (shoulder_final.z - shoulder_curr.z) * itp;
+
+      leftForearm.rotation.x = forearm_curr.x + (forearm_final.x - forearm_curr.x) * itp;
+      leftForearm.rotation.y = forearm_curr.y + (forearm_final.y - forearm_curr.y) * itp;
+      leftForearm.rotation.z = forearm_curr.z + (forearm_final.z - forearm_curr.z) * itp;
+    }
+  }
+  
+
 
   // Rotate eyes based on mouse position
   useFrame(() => {
-    if (mousePosition ) {
-      const { x, y } = mousePosition; // Destructure mouse position
-      updateEyes(mousePosition)
-      
+    if(playAnimation){
+      waveHello(leftShoulder, leftForearm)
       
     }
+    else {
+      resetLeftArm()
+      nodes.Wolf3D_Head.morphTargetInfluences[1] = 0
+      nodes.Wolf3D_Head.morphTargetInfluences[0] = 0
+      if (mousePosition ) {
+        const { x, y } = mousePosition; // Destructure mouse position
+        updateEyes(mousePosition)
+        
+      }
+
+    }
+    
+    
+    
+ 
+      
+      
+
+    
 
    
   });
