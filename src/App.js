@@ -81,8 +81,8 @@ export default function App() {
       <button
       style={{
         position: 'absolute',
-        top: '15vh',
-        left: '10vw', // Adjust this value to position slightly to the left
+        top: '10vh',
+        left: '5vw', // Adjust this value to position slightly to the left
         zIndex: 1,
         padding: '10px 20px',
         fontSize: '18px',
@@ -97,19 +97,19 @@ export default function App() {
       onMouseLeave={handleMouseLeave}
       onClick={waveHello}
     >
-      welcome to my site
+      welcome to my site &#128075;
     </button>
 
       {/* 3D Canvas */}
-      <Canvas>
+      <Canvas style={{ background: 'rgba(90,10,15,.92)' }}>
         <PerspectiveCamera
           makeDefault
-          position={[0, 1.5, 0.5]} // Positioning the camera to frame head and shoulders
+          position={[0, 1.5, 0.75]} // Positioning the camera to frame head and shoulders
           fov={45} // Field of view - adjust this to zoom in or out
         />
         <ambientLight intensity={0.5} />
-        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} color="rgb(230,187,173)"  />
-        <pointLight position={[-10, 10, -5]} decay={0} intensity={Math.PI} color="rgba(173, 216, 230,1)" />
+        <spotLight position={[10, 10, 10]} angle={0.2} penumbra={1} decay={0} intensity={Math.PI } color="rgba(230,187,173,1)"  />
+        <pointLight position={[-10, 10, -10]} decay={0} intensity={Math.PI*2} color="rgba(173, 216, 230,1)" />
 
         {/* Render the model */}
         <Model mousePosition={mousePosition} playAnimation={playAnimation} wireframe={true} />
@@ -117,8 +117,8 @@ export default function App() {
 
         <OrbitControls
           target={[0, 1.5, 0.5]}
-          minDistance={0.25}
-          maxDistance={0.5}
+          minDistance={0.5}
+          maxDistance={0.75}
           minPolarAngle={Math.PI / 4}
           maxPolarAngle={Math.PI / 2}
           minAzimuthAngle={-Math.PI / 4}
