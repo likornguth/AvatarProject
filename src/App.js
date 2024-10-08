@@ -85,7 +85,7 @@ export default function App() {
         left: '10vw', // Adjust this value to position slightly to the left
         zIndex: 1,
         padding: '10px 20px',
-        fontSize: '24px',
+        fontSize: '18px',
         backgroundColor: isHovered ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.3)', // Semi-transparent background
         border: '2px solid white',
         color: isHovered ? 'black' : 'white',
@@ -97,7 +97,7 @@ export default function App() {
       onMouseLeave={handleMouseLeave}
       onClick={waveHello}
     >
-      hi, welcome to my site &lt;3
+      welcome to my site &lt;3
     </button>
 
       {/* 3D Canvas */}
